@@ -11,10 +11,8 @@ const validateJwt = async (decoded, request, h) => {
   return { isValid: isValidated };
 };
 
-const generateJwt = (jwt, _username) => jwt.sign(
-  {
-    username: _username,
-  },
+const generateJwt = (jwt, username) => jwt.sign(
+  { username },
   process.env.JWT_SECRET,
 );
 

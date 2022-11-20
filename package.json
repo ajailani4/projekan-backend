@@ -19,8 +19,10 @@
   },
   "dependencies": {
     "@hapi/hapi": "^21.0.0",
+    "bcrypt": "^5.1.0",
     "dotenv": "^16.0.3",
     "hapi-auth-jwt2": "^10.2.0",
-    "hapi-mongodb": "^10.0.3"
+    "hapi-mongodb": "^10.0.3",
+    "jsonwebtoken": "^8.5.1"
   }
 }

@@ -2,6 +2,7 @@ const Hapi = require('@hapi/hapi');
 const mongoDb = require('hapi-mongodb');
 const dotenv = require('dotenv');
 const hapiAuthJWT = require('hapi-auth-jwt2');
+const routes = require('./route');
 const { validateJwt } = require('./util/jwt-util');
 
 const init = async () => {
@@ -41,6 +42,9 @@ const init = async () => {
       verifyOptions: { ignoreExpiration: true },
     },
   );
+
+  // Setup routes
+  server.route(routes);
 
   // Start the server
   await server.start();
