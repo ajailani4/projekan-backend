@@ -13,25 +13,25 @@ const register = async (request, h) => {
   } = request.payload;
   let response = '';
 
-  // Check if already exists
-  const user = await request.mongo.db.collection('users').findOne({ username });
-
-  if (user) {
-    response = h.response({
-      code: 409,
-      status: 'Conflict',
-      message: 'User already exists. Try another username',
-    });
-
-    response.code(409);
-
-    return response;
-  }
-
-  // Insert a new user
-  const hashedPassword = await bcrypt.hash(password, saltRounds);
-
   try {
+    // Check if already exists
+    const user = await request.mongo.db.collection('users').findOne({ username });
+
+    if (user) {
+      response = h.response({
+        code: 409,
+        status: 'Conflict',
+        message: 'Username already exists. Try another username',
+      });
+
+      response.code(409);
+
+      return response;
+    }
+
+    // Insert a new user
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
     await request.mongo.db.collection('users')
       .insertOne({
         username,
