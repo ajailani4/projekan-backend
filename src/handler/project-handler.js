@@ -84,4 +84,93 @@ const uploadProject = async (request, h) => {
   return response;
 };
 
-module.exports = { getProjects, uploadProject };
+const updateProject = async (request, h) => {
+  const { id } = request.params;
+  const { ObjectID } = request.mongo;
+  const {
+    title,
+    description,
+    platform,
+    category,
+    deadline,
+  } = request.payload;
+  const { username } = request.auth.credentials;
+
+  let { icon } = request.payload;
+  let response = '';
+
+  try {
+    // Update the icon if icon is changed
+    if (icon) {
+      const uploadIconResult = await uploadIcon('projekan_project_icon', icon);
+      icon = uploadIconResult.url;
+
+      await request.mongo.db.collection('projects')
+        .updateOne(
+          { _id: ObjectID(id) },
+          {
+            $set: {
+              username,
+              title,
+              description,
+              platform,
+              category,
+              deadline,
+              icon,
+            },
+          },
+        );
+
+      response = h.response({
+        code: 200,
+        status: 'OK',
+        message: 'Project has been updated',
+      });
+
+      response.code(200);
+
+      return response;
+    }
+
+    await request.mongo.db.collection('projects')
+      .updateOne(
+        { _id: ObjectID(id) },
+        {
+          $set: {
+            username,
+            title,
+            description,
+            platform,
+            category,
+            deadline,
+          },
+        },
+      );
+
+    response = h.response({
+      code: 200,
+      status: 'OK',
+      message: 'Project has been updated',
+    });
+
+    response.code(200);
+
+    return response;
+  } catch (e) {
+    response = h.response({
+      code: 400,
+      status: 'Bad Request',
+      message: 'error',
+    });
+
+    response.code(400);
+  }
+
+  return response;
+};
+
+module.exports = {
+  getProjects,
+  uploadProject,
+  updateProject,
+};
