@@ -6,6 +6,7 @@ const {
   getProjects,
   uploadProject,
   updateProject,
+  deleteProject,
 } = require('./handler/project-handler');
 
 const prefix = '/api/v1';
@@ -60,6 +61,20 @@ const routes = [
       },
     },
     handler: updateProject,
+  },
+  // Delete a Project
+  {
+    method: 'DELETE',
+    path: `${prefix}/projects/{id}`,
+    options: {
+      auth: 'jwt',
+      validate: {
+        params: Joi.object({
+          id: Joi.objectId(),
+        }),
+      },
+    },
+    handler: deleteProject,
   },
 ];
 

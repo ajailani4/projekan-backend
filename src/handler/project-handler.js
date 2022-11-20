@@ -183,8 +183,54 @@ const updateProject = async (request, h) => {
   return response;
 };
 
+const deleteProject = async (request, h) => {
+  const { id } = request.params;
+  const { ObjectID } = request.mongo;
+  let response = '';
+
+  try {
+    // Check if project exists
+    const project = await request.mongo.db.collection('projects').findOne({ _id: ObjectID(id) });
+
+    if (!project) {
+      response = h.response({
+        code: 404,
+        status: 'Not Found',
+        message: 'Project is not found',
+      });
+
+      response.code(404);
+
+      return response;
+    }
+
+    await request.mongo.db.collection('projects').deleteOne({ _id: ObjectID(id) });
+
+    response = h.response({
+      code: 200,
+      status: 'OK',
+      message: 'Project has been deleted',
+    });
+
+    response.code(200);
+
+    return response;
+  } catch (e) {
+    response = h.response({
+      code: 400,
+      status: 'Bad Request',
+      message: 'error',
+    });
+
+    response.code(400);
+  }
+
+  return response;
+};
+
 module.exports = {
   getProjects,
   uploadProject,
   updateProject,
+  deleteProject,
 };
