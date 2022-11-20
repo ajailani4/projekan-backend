@@ -4,7 +4,7 @@ Joi.objectId = require('joi-objectid')(Joi);
 const { register, login } = require('./handler/user-handler');
 const {
   getProjects,
-  uploadProject,
+  addProject,
   updateProject,
   deleteProject,
 } = require('./handler/project-handler');
@@ -36,7 +36,7 @@ const routes = [
         multipart: true,
       },
     },
-    handler: uploadProject,
+    handler: addProject,
   },
   // Get Projects
   {

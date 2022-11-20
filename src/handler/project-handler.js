@@ -33,7 +33,7 @@ const getProjects = async (request, h) => {
   return response;
 };
 
-const uploadProject = async (request, h) => {
+const addProject = async (request, h) => {
   const {
     title,
     description,
@@ -230,7 +230,7 @@ const deleteProject = async (request, h) => {
 
 module.exports = {
   getProjects,
-  uploadProject,
+  addProject,
   updateProject,
   deleteProject,
 };
