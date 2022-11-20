@@ -59,7 +59,6 @@ const uploadProject = async (request, h) => {
         category,
         deadline,
         icon,
-        tasks: [],
       });
 
     response = h.response({
