@@ -8,6 +8,7 @@ const {
   updateProject,
   deleteProject,
 } = require('./handler/project-handler');
+const { addTask } = require('./handler/task-handler');
 
 const prefix = '/api/v1';
 
@@ -75,6 +76,13 @@ const routes = [
       },
     },
     handler: deleteProject,
+  },
+  // Add a Task
+  {
+    method: 'POST',
+    path: `${prefix}/tasks`,
+    options: { auth: 'jwt' },
+    handler: addTask,
   },
 ];
 
