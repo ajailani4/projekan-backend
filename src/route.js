@@ -15,21 +15,21 @@ const routes = [
   {
     method: 'POST',
     path: `${prefix}/register`,
-    config: { auth: false },
+    options: { auth: false },
     handler: register,
   },
   // Login
   {
     method: 'POST',
     path: `${prefix}/login`,
-    config: { auth: false },
+    options: { auth: false },
     handler: login,
   },
   // Add a Project
   {
     method: 'POST',
     path: `${prefix}/projects`,
-    config: {
+    options: {
       auth: 'jwt',
       payload: {
         multipart: true,
@@ -41,7 +41,7 @@ const routes = [
   {
     method: 'GET',
     path: `${prefix}/projects`,
-    config: { auth: 'jwt' },
+    options: { auth: 'jwt' },
     handler: getProjects,
   },
   // Update a Project
