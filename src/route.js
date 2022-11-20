@@ -1,5 +1,5 @@
 const { register, login } = require('./handler/user-handler');
-const { uploadProject } = require('./handler/project-handler');
+const { uploadProject, getProjects } = require('./handler/project-handler');
 
 const prefix = '/api/v1';
 
@@ -29,6 +29,13 @@ const routes = [
       },
     },
     handler: uploadProject,
+  },
+  // Get Projects
+  {
+    method: 'GET',
+    path: `${prefix}/projects`,
+    config: { auth: 'jwt' },
+    handler: getProjects,
   },
 ];
 
