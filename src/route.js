@@ -1,5 +1,12 @@
+const Joi = require('@hapi/joi');
+Joi.objectId = require('joi-objectid')(Joi);
+
 const { register, login } = require('./handler/user-handler');
-const { uploadProject, getProjects } = require('./handler/project-handler');
+const {
+  getProjects,
+  uploadProject,
+  updateProject,
+} = require('./handler/project-handler');
 
 const prefix = '/api/v1';
 
@@ -8,21 +15,21 @@ const routes = [
   {
     method: 'POST',
     path: `${prefix}/register`,
-    config: { auth: false },
+    options: { auth: false },
     handler: register,
   },
   // Login
   {
     method: 'POST',
     path: `${prefix}/login`,
-    config: { auth: false },
+    options: { auth: false },
     handler: login,
   },
   // Add a Project
   {
     method: 'POST',
     path: `${prefix}/projects`,
-    config: {
+    options: {
       auth: 'jwt',
       payload: {
         multipart: true,
@@ -34,8 +41,25 @@ const routes = [
   {
     method: 'GET',
     path: `${prefix}/projects`,
-    config: { auth: 'jwt' },
+    options: { auth: 'jwt' },
     handler: getProjects,
+  },
+  // Update a Project
+  {
+    method: 'PUT',
+    path: `${prefix}/projects/{id}`,
+    options: {
+      auth: 'jwt',
+      payload: {
+        multipart: true,
+      },
+      validate: {
+        params: Joi.object({
+          id: Joi.objectId(),
+        }),
+      },
+    },
+    handler: updateProject,
   },
 ];
 
