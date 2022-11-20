@@ -2,6 +2,7 @@ const { uploadIcon } = require('../util/cloudinary-util');
 
 const getProjects = async (request, h) => {
   const { username } = request.auth.credentials;
+  const { ObjectID } = request.mongo;
   let { page, size } = request.query;
   let response = '';
 
@@ -18,7 +19,18 @@ const getProjects = async (request, h) => {
     response = h.response({
       code: 200,
       status: 'OK',
-      data: projects,
+      data: await Promise.all(projects.map(async (project) => ({
+        id: project._id,
+        title: project.title,
+        description: project.description,
+        platform: project.platform,
+        category: project.category,
+        deadline: project.deadline,
+        icon: project.icon,
+        tasks: await request.mongo.db.collection('tasks')
+          .find({ projectId: ObjectID(project._id) })
+          .toArray(),
+      }))),
     });
   } catch (e) {
     response = h.response({

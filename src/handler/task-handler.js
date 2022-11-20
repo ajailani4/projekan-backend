@@ -21,7 +21,7 @@ const addTask = async (request, h) => {
 
     await request.mongo.db.collection('tasks')
       .insertOne({
-        projectId,
+        projectId: ObjectID(projectId),
         title,
         status: 'UNDONE',
       });
