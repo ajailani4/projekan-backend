@@ -99,6 +99,21 @@ const updateProject = async (request, h) => {
   let response = '';
 
   try {
+    // Check if project exists
+    const project = await request.mongo.db.collection('projects').findOne({ _id: ObjectID(id) });
+
+    if (!project) {
+      response = h.response({
+        code: 404,
+        status: 'Not Found',
+        message: 'Project is not found',
+      });
+
+      response.code(404);
+
+      return response;
+    }
+
     // Update the icon if icon is changed
     if (icon) {
       const uploadIconResult = await uploadIcon('projekan_project_icon', icon);
