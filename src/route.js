@@ -11,6 +11,7 @@ const {
 const {
   addTask,
   updateTask,
+  deleteTask,
 } = require('./handler/task-handler');
 
 const prefix = '/api/v1';
@@ -100,6 +101,20 @@ const routes = [
       },
     },
     handler: updateTask,
+  },
+  // Delete a Task
+  {
+    method: 'DELETE',
+    path: `${prefix}/tasks/{id}`,
+    options: {
+      auth: 'jwt',
+      validate: {
+        params: Joi.object({
+          id: Joi.objectId(),
+        }),
+      },
+    },
+    handler: deleteTask,
   },
 ];
 
