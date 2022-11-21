@@ -8,7 +8,10 @@ const {
   updateProject,
   deleteProject,
 } = require('./handler/project-handler');
-const { addTask } = require('./handler/task-handler');
+const {
+  addTask,
+  updateTask,
+} = require('./handler/task-handler');
 
 const prefix = '/api/v1';
 
@@ -83,6 +86,20 @@ const routes = [
     path: `${prefix}/tasks`,
     options: { auth: 'jwt' },
     handler: addTask,
+  },
+  // Update a Task
+  {
+    method: 'PUT',
+    path: `${prefix}/tasks/{id}`,
+    options: {
+      auth: 'jwt',
+      validate: {
+        params: Joi.object({
+          id: Joi.objectId(),
+        }),
+      },
+    },
+    handler: updateTask,
   },
 ];
 
