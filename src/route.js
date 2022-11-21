@@ -4,10 +4,11 @@ Joi.objectId = require('joi-objectid')(Joi);
 const { register, login } = require('./handler/user-handler');
 const {
   getProjects,
-  uploadProject,
+  addProject,
   updateProject,
   deleteProject,
 } = require('./handler/project-handler');
+const { addTask } = require('./handler/task-handler');
 
 const prefix = '/api/v1';
 
@@ -36,7 +37,7 @@ const routes = [
         multipart: true,
       },
     },
-    handler: uploadProject,
+    handler: addProject,
   },
   // Get Projects
   {
@@ -75,6 +76,13 @@ const routes = [
       },
     },
     handler: deleteProject,
+  },
+  // Add a Task
+  {
+    method: 'POST',
+    path: `${prefix}/tasks`,
+    options: { auth: 'jwt' },
+    handler: addTask,
   },
 ];
 
