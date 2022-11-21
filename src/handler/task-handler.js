@@ -100,4 +100,53 @@ const updateTask = async (request, h) => {
   return response;
 };
 
-module.exports = { addTask, updateTask };
+const deleteTask = async (request, h) => {
+  const { id } = request.params;
+  const { ObjectID } = request.mongo;
+  let response = '';
+
+  try {
+    // Chekc if task exists
+    const task = await request.mongo.db.collection('tasks').findOne({ _id: ObjectID(id) });
+
+    if (!task) {
+      response = h.response({
+        code: 404,
+        status: 'Not Found',
+        message: 'Task is not found',
+      });
+
+      response.code(404);
+
+      return response;
+    }
+
+    await request.mongo.db.collection('tasks').deleteOne({ _id: ObjectID(id) });
+
+    response = h.response({
+      code: 200,
+      status: 'OK',
+      message: 'Task has been deleted',
+    });
+
+    response.code(200);
+
+    return response;
+  } catch (e) {
+    response = h.response({
+      code: 400,
+      status: 'Bad Request',
+      message: 'error',
+    });
+
+    response.code(400);
+  }
+
+  return response;
+};
+
+module.exports = {
+  addTask,
+  updateTask,
+  deleteTask,
+};
