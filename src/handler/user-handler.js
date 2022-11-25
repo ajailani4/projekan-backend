@@ -77,8 +77,8 @@ const login = async (request, h) => {
 
       if (await bcrypt.compare(password, hashedPassword)) {
         response = h.response({
-          code: 201,
-          status: 'Created',
+          code: 200,
+          status: 'OK',
           data: {
             username,
             accessToken: generateJwt(jwt, username),
