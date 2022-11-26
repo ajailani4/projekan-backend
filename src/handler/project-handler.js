@@ -19,7 +19,7 @@ const getProjects = async (request, h) => {
     response = h.response({
       code: 200,
       status: 'OK',
-      data: await Promise.all(projects.map(async (project) => ({
+      data: projects.map((project) => ({
         id: project._id,
         title: project.title,
         description: project.description,
@@ -27,10 +27,7 @@ const getProjects = async (request, h) => {
         category: project.category,
         deadline: project.deadline,
         icon: project.icon,
-        tasks: await request.mongo.db.collection('tasks')
-          .find({ projectId: ObjectID(project._id) })
-          .toArray(),
-      }))),
+      })),
     });
   } catch (e) {
     response = h.response({
