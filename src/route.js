@@ -4,6 +4,7 @@ Joi.objectId = require('joi-objectid')(Joi);
 const { register, login } = require('./handler/user-handler');
 const {
   getProjects,
+  getProjectDetail,
   addProject,
   updateProject,
   deleteProject,
@@ -49,6 +50,20 @@ const routes = [
     path: `${prefix}/projects`,
     options: { auth: 'jwt' },
     handler: getProjects,
+  },
+  // Get Project Detail
+  {
+    method: 'GET',
+    path: `${prefix}/projects/{id}`,
+    options: {
+      auth: 'jwt',
+      validate: {
+        params: Joi.object({
+          id: Joi.objectId(),
+        }),
+      },
+    },
+    handler: getProjectDetail,
   },
   // Update a Project
   {
