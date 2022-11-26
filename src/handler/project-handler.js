@@ -2,7 +2,6 @@ const { uploadIcon } = require('../util/cloudinary-util');
 
 const getProjects = async (request, h) => {
   const { username } = request.auth.credentials;
-  const { ObjectID } = request.mongo;
   let { page, size } = request.query;
   let response = '';
 
@@ -29,6 +28,68 @@ const getProjects = async (request, h) => {
         icon: project.icon,
       })),
     });
+  } catch (e) {
+    response = h.response({
+      code: 400,
+      status: 'Bad Request',
+      message: 'error',
+    });
+
+    response.code(400);
+  }
+
+  return response;
+};
+
+const getProjectDetail = async (request, h) => {
+  const { id } = request.params;
+  const { ObjectID } = request.mongo;
+  let response = '';
+
+  try {
+    const project = await request.mongo.db.collection('projects').findOne({ _id: ObjectID(id) });
+
+    if (!project) {
+      response = h.response({
+        code: 404,
+        status: 'Not Found',
+        message: 'Project is not found',
+      });
+
+      response.code(404);
+
+      return response;
+    }
+
+    // Count project progress
+    const totalTasks = await request.mongo.db.collection('tasks')
+      .countDocuments({ projectId: ObjectID(id) });
+
+    const doneTasks = await request.mongo.db.collection('tasks')
+      .countDocuments({ projectId: ObjectID(id), status: 'DONE' });
+
+    response = h.response({
+      code: 200,
+      status: 'OK',
+      data: {
+        id: project._id,
+        title: project.title,
+        description: project.description,
+        platform: project.platform,
+        category: project.category,
+        deadline: project.deadline,
+        icon: project.icon,
+        progress: totalTasks !== 0 ? Math.round((doneTasks / totalTasks) * 100) : 0,
+        status: doneTasks - totalTasks === 0 ? 'DONE' : 'UNDONE',
+        tasks: await request.mongo.db.collection('tasks')
+          .find({ projectId: ObjectID(project._id) })
+          .toArray(),
+      },
+    });
+
+    response.code(200);
+
+    return response;
   } catch (e) {
     response = h.response({
       code: 400,
@@ -244,6 +305,7 @@ const deleteProject = async (request, h) => {
 
 module.exports = {
   getProjects,
+  getProjectDetail,
   addProject,
   updateProject,
   deleteProject,
