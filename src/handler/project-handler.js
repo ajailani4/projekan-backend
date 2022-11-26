@@ -216,7 +216,12 @@ const deleteProject = async (request, h) => {
       return response;
     }
 
-    await request.mongo.db.collection('projects').deleteOne({ _id: ObjectID(id) });
+    const result = await request.mongo.db.collection('projects').deleteOne({ _id: ObjectID(id) });
+
+    // Delete its tasks
+    if (result.deletedCount === 1) {
+      await request.mongo.db.collection('tasks').deleteMany({ projectId: ObjectID(id) });
+    }
 
     response = h.response({
       code: 200,
