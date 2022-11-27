@@ -3,17 +3,30 @@ const { uploadIcon } = require('../util/cloudinary-util');
 const getProjects = async (request, h) => {
   const { username } = request.auth.credentials;
   let { page, size } = request.query;
+  const { type } = request.query;
   let response = '';
+  let projects = '';
+  const millisecInDay = 86400000;
 
   try {
     page = Number(page) || 1;
     size = Number(size) || 10;
 
-    const projects = await request.mongo.db.collection('projects')
+    projects = await request.mongo.db.collection('projects')
       .find({ username })
       .skip((page - 1) * size)
       .limit(size)
       .toArray();
+
+    if (type === 'DEADLINE') {
+      projects = projects.filter((project) => {
+        const projectDeadline = new Date(project.deadline);
+        const currentDate = new Date();
+        return ((projectDeadline - currentDate) / millisecInDay >= 0
+                && (projectDeadline - currentDate) / millisecInDay <= 7)
+                || (projectDeadline.toDateString() === currentDate.toDateString());
+      });
+    }
 
     response = h.response({
       code: 200,
