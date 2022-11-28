@@ -1,7 +1,11 @@
 const Joi = require('@hapi/joi');
 Joi.objectId = require('joi-objectid')(Joi);
 
-const { register, login } = require('./handler/user-handler');
+const {
+  register,
+  login,
+  getProfile,
+} = require('./handler/user-handler');
 const {
   getProjects,
   getProjectDetail,
@@ -31,6 +35,13 @@ const routes = [
     path: `${prefix}/login`,
     options: { auth: false },
     handler: login,
+  },
+  // Get User
+  {
+    method: 'GET',
+    path: `${prefix}/profile`,
+    options: { auth: 'jwt' },
+    handler: getProfile,
   },
   // Add a Project
   {
