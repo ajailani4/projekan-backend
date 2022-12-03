@@ -81,6 +81,17 @@ const getProjectDetail = async (request, h) => {
     const doneTasks = await request.mongo.db.collection('tasks')
       .countDocuments({ projectId: ObjectID(id), status: 'DONE' });
 
+    const progress = totalTasks !== 0 ? Math.round((doneTasks / totalTasks) * 100) : 0;
+    let projectStatus = '';
+
+    if (progress === 0) {
+      projectStatus = 'TODO';
+    } else if (progress > 0 && progress < 100) {
+      projectStatus = 'IN_PROGRESS';
+    } else if (progress === 100) {
+      projectStatus = 'DONE';
+    }
+
     response = h.response({
       code: 200,
       status: 'OK',
@@ -92,8 +103,8 @@ const getProjectDetail = async (request, h) => {
         category: project.category,
         deadline: project.deadline,
         icon: project.icon,
-        progress: totalTasks !== 0 ? Math.round((doneTasks / totalTasks) * 100) : 0,
-        status: doneTasks - totalTasks === 0 ? 'DONE' : 'UNDONE',
+        progress,
+        status: projectStatus,
         tasks: await request.mongo.db.collection('tasks')
           .find({ projectId: ObjectID(project._id) })
           .toArray(),
