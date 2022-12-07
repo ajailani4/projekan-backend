@@ -141,8 +141,12 @@ const addProject = async (request, h) => {
   let response = '';
 
   try {
-    const uploadIconResult = await uploadIcon('projekan_project_icon', icon);
-    icon = uploadIconResult.url;
+    if (icon) {
+      const uploadIconResult = await uploadIcon('projekan_project_icon', icon);
+      icon = uploadIconResult.url;
+    } else {
+      icon = 'https://res.cloudinary.com/dysojzcqm/image/upload/v1670380307/projekan_project_icon/default_project_icon_lgjnoo.png';
+    }
 
     await request.mongo.db.collection('projects')
       .insertOne({
