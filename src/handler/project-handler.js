@@ -15,6 +15,7 @@ const getProjects = async (request, h) => {
     if (type === 'DEADLINE') {
       projects = await request.mongo.db.collection('projects')
         .find({ username })
+        .sort({ updatedAt: -1 })
         .toArray();
 
       projects = projects.filter((project) => {
@@ -27,6 +28,7 @@ const getProjects = async (request, h) => {
     } else {
       projects = await request.mongo.db.collection('projects')
         .find({ username })
+        .sort({ updatedAt: -1 })
         .skip((page - 1) * size)
         .limit(size)
         .toArray();
@@ -43,6 +45,8 @@ const getProjects = async (request, h) => {
         category: project.category,
         deadline: project.deadline,
         icon: project.icon,
+        createdAt: project.createdAt,
+        updatedAt: project.updatedAt,
       })),
     });
   } catch (e) {
@@ -109,6 +113,8 @@ const getProjectDetail = async (request, h) => {
         icon: project.icon,
         progress,
         status: projectStatus,
+        createdAt: project.createdAt,
+        updatedAt: project.updatedAt,
         tasks: await request.mongo.db.collection('tasks')
           .find({ projectId: ObjectID(project._id) })
           .toArray(),
@@ -152,6 +158,8 @@ const addProject = async (request, h) => {
       icon = 'https://res.cloudinary.com/dysojzcqm/image/upload/v1670380307/projekan_project_icon/default_project_icon_lgjnoo.png';
     }
 
+    const createdAt = new Date().toISOString();
+
     await request.mongo.db.collection('projects')
       .insertOne({
         username,
@@ -161,6 +169,8 @@ const addProject = async (request, h) => {
         category,
         deadline,
         icon,
+        createdAt,
+        updatedAt: createdAt,
       });
 
     response = h.response({
@@ -216,6 +226,8 @@ const updateProject = async (request, h) => {
       return response;
     }
 
+    const updatedAt = new Date().toISOString();
+
     // Update the icon if icon is changed
     if (icon) {
       const uploadIconResult = await uploadIcon('projekan_project_icon', icon);
@@ -233,6 +245,7 @@ const updateProject = async (request, h) => {
               category,
               deadline,
               icon,
+              updatedAt,
             },
           },
         );
@@ -259,6 +272,7 @@ const updateProject = async (request, h) => {
             platform,
             category,
             deadline,
+            updatedAt,
           },
         },
       );
