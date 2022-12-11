@@ -12,13 +12,11 @@ const getProjects = async (request, h) => {
     page = Number(page) || 1;
     size = Number(size) || 10;
 
-    projects = await request.mongo.db.collection('projects')
-      .find({ username })
-      .skip((page - 1) * size)
-      .limit(size)
-      .toArray();
-
     if (type === 'DEADLINE') {
+      projects = await request.mongo.db.collection('projects')
+        .find({ username })
+        .toArray();
+
       projects = projects.filter((project) => {
         const projectDeadline = new Date(project.deadline);
         const currentDate = new Date();
@@ -26,6 +24,12 @@ const getProjects = async (request, h) => {
                 && (projectDeadline - currentDate) / millisecInDay <= 7)
                 || (projectDeadline.toDateString() === currentDate.toDateString());
       });
+    } else {
+      projects = await request.mongo.db.collection('projects')
+        .find({ username })
+        .skip((page - 1) * size)
+        .limit(size)
+        .toArray();
     }
 
     response = h.response({
