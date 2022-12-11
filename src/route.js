@@ -9,6 +9,7 @@ const {
 const {
   getProjects,
   getProjectDetail,
+  getProjectProgress,
   addProject,
   updateProject,
   deleteProject,
@@ -75,6 +76,20 @@ const routes = [
       },
     },
     handler: getProjectDetail,
+  },
+  // Get Project Progress
+  {
+    method: 'GET',
+    path: `${prefix}/project-progress/{id}`,
+    options: {
+      auth: 'jwt',
+      validate: {
+        params: Joi.object({
+          id: Joi.objectId(),
+        }),
+      },
+    },
+    handler: getProjectProgress,
   },
   // Update a Project
   {

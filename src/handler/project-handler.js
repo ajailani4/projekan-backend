@@ -137,6 +137,57 @@ const getProjectDetail = async (request, h) => {
   return response;
 };
 
+const getProjectProgress = async (request, h) => {
+  const { id } = request.params;
+  const { ObjectID } = request.mongo;
+  let response = '';
+
+  try {
+    const project = await request.mongo.db.collection('projects').findOne({ _id: ObjectID(id) });
+
+    if (!project) {
+      response = h.response({
+        code: 404,
+        status: 'Not Found',
+        message: 'Project is not found',
+      });
+
+      response.code(404);
+
+      return response;
+    }
+
+    // Count project progress
+    const totalTasks = await request.mongo.db.collection('tasks')
+      .countDocuments({ projectId: ObjectID(id) });
+
+    const doneTasks = await request.mongo.db.collection('tasks')
+      .countDocuments({ projectId: ObjectID(id), status: 'DONE' });
+
+    const progress = totalTasks !== 0 ? Math.round((doneTasks / totalTasks) * 100) : 0;
+
+    response = h.response({
+      code: 200,
+      status: 'OK',
+      data: { progress },
+    });
+
+    response.code(200);
+
+    return response;
+  } catch (e) {
+    response = h.response({
+      code: 400,
+      status: 'Bad Request',
+      message: 'error',
+    });
+
+    response.code(400);
+  }
+
+  return response;
+};
+
 const addProject = async (request, h) => {
   const {
     title,
@@ -352,6 +403,7 @@ const deleteProject = async (request, h) => {
 module.exports = {
   getProjects,
   getProjectDetail,
+  getProjectProgress,
   addProject,
   updateProject,
   deleteProject,
